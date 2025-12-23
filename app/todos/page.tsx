@@ -26,7 +26,7 @@ export default function GlobalTodoPage() {
     // 1. Subscribe projects first (to map projectId -> Project)
     useEffect(() => {
         if (user) {
-            subscribeProjects(user.uid);
+            subscribeProjects(user.uid, user.isAnonymous);
         }
     }, [user, subscribeProjects]);
 
