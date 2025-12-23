@@ -58,9 +58,19 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
     ];
 
     return (
-        <div className="flex h-screen bg-zinc-950 text-zinc-100">
-            {/* Sidebar */}
-            <aside className="w-64 border-r border-zinc-800 flex flex-col">
+        <div className="flex h-screen bg-zinc-950 text-zinc-100 flex-col lg:flex-row overflow-hidden">
+            {/* Mobile Header */}
+            <header className="flex lg:hidden items-center justify-between p-4 border-b border-zinc-800 bg-zinc-950/80 backdrop-blur-md sticky top-0 z-50">
+                <div className="flex items-center gap-2 font-bold text-lg tracking-tight">
+                    <Disc className="h-5 w-5 text-orange-500" /> Manda-Task
+                </div>
+                <button onClick={() => logout()} className="p-2 text-zinc-400 hover:text-white transition-colors">
+                    <LogOut size={18} />
+                </button>
+            </header>
+
+            {/* Desktop Sidebar */}
+            <aside className="hidden lg:flex w-64 border-r border-zinc-800 flex-col">
                 <div className="p-6 flex items-center gap-2 font-bold text-xl tracking-tight">
                     <Disc className="h-6 w-6 text-orange-500" /> Manda-Task
                 </div>
@@ -97,9 +107,29 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
             </aside>
 
             {/* Main Content */}
-            <main className="flex-1 overflow-auto flex flex-col">
+            <main className="flex-1 overflow-auto flex flex-col relative pb-16 lg:pb-0">
                 {children}
             </main>
+
+            {/* Mobile Bottom Navigation */}
+            <nav className="flex lg:hidden fixed bottom-0 left-0 right-0 h-16 border-t border-zinc-800 bg-zinc-950/90 backdrop-blur-lg z-50 items-center justify-around px-6">
+                {navItems.map((item) => {
+                    const isActive = item.href === '/' ? pathname === '/' : pathname.startsWith(item.href);
+                    return (
+                        <Link
+                            key={item.href}
+                            href={item.href}
+                            className={clsx(
+                                "flex flex-col items-center gap-1 transition-colors px-4 py-1 rounded-lg",
+                                isActive ? "text-orange-500" : "text-zinc-500 hover:text-zinc-300"
+                            )}
+                        >
+                            <item.icon size={22} strokeWidth={isActive ? 2.5 : 2} />
+                            <span className="text-[10px] font-medium uppercase tracking-wider">{item.label}</span>
+                        </Link>
+                    );
+                })}
+            </nav>
         </div>
     );
 }

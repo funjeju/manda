@@ -44,7 +44,7 @@ export default function CellCard({ node, isCenter, onClick }: CellCardProps) {
         <div
             onClick={onClick}
             className={clsx(
-                'w-full h-full p-4 rounded-xl border flex flex-col justify-between transition relative overflow-hidden cursor-pointer',
+                'w-full h-full p-2 sm:p-4 rounded-xl border flex flex-col justify-between transition relative overflow-hidden cursor-pointer',
                 isCenter
                     ? 'bg-zinc-800 border-orange-500/50 ring-4 ring-orange-500/10 scale-[1.02] shadow-xl z-10'
                     : 'bg-zinc-900 border-zinc-800 hover:border-zinc-600 hover:bg-zinc-800/80'

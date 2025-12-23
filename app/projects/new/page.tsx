@@ -40,15 +40,15 @@ export default function NewProjectPage() {
     };
 
     return (
-        <div className="p-8 max-w-2xl mx-auto w-full">
-            <Link href="/" className="inline-flex items-center text-zinc-400 hover:text-white mb-6">
+        <div className="p-4 sm:p-8 max-w-2xl mx-auto w-full">
+            <Link href="/" className="inline-flex items-center text-zinc-400 hover:text-white mb-4 sm:mb-6">
                 <ArrowLeft size={16} className="mr-2" /> Back to Dashboard
             </Link>
 
-            <h1 className="text-3xl font-bold text-white mb-2">Create New Project</h1>
-            <p className="text-zinc-400 mb-8">Define the core structure of your goal.</p>
+            <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">Create New Project</h1>
+            <p className="text-zinc-400 mb-6 sm:mb-8 text-sm sm:text-base">Define the core structure of your goal.</p>
 
-            <form onSubmit={handleSubmit} className="space-y-6 bg-zinc-900/50 p-8 rounded-xl border border-zinc-800">
+            <form onSubmit={handleSubmit} className="space-y-6 bg-zinc-900/50 p-5 sm:p-8 rounded-xl border border-zinc-800">
                 <div>
                     <label className="block text-sm font-medium text-zinc-300 mb-1">Project Title</label>
                     <input
@@ -56,12 +56,12 @@ export default function NewProjectPage() {
                         required
                         value={formData.title}
                         onChange={e => setFormData({ ...formData, title: e.target.value })}
-                        className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-orange-500 outline-none transition"
+                        className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-orange-500 outline-none transition"
                         placeholder="e.g. Mastering Fullstack Development"
                     />
                 </div>
 
-                <div className="grid grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                     <div>
                         <label className="block text-sm font-medium text-zinc-300 mb-1">Start Date</label>
                         <input
@@ -69,7 +69,7 @@ export default function NewProjectPage() {
                             required
                             value={formData.startDate}
                             onChange={e => setFormData({ ...formData, startDate: e.target.value })}
-                            className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-orange-500 outline-none transition text-white"
+                            className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-orange-500 outline-none transition text-white [color-scheme:dark]"
                         />
                     </div>
                     <div>
@@ -79,18 +79,18 @@ export default function NewProjectPage() {
                             required
                             value={formData.endDate}
                             onChange={e => setFormData({ ...formData, endDate: e.target.value })}
-                            className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-orange-500 outline-none transition text-white"
+                            className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-orange-500 outline-none transition text-white [color-scheme:dark]"
                         />
                     </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                     <div>
                         <label className="block text-sm font-medium text-zinc-300 mb-1">Mode</label>
                         <select
                             value={formData.mode}
                             onChange={e => setFormData({ ...formData, mode: e.target.value as any })}
-                            className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-orange-500 outline-none transition"
+                            className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-orange-500 outline-none transition"
                         >
                             <option value="SOLO">Solo (Self-Managed)</option>
                             <option value="TEAM">Team (Approval Flow)</option>
@@ -102,17 +102,17 @@ export default function NewProjectPage() {
                             type="text"
                             value={formData.institutionName}
                             onChange={e => setFormData({ ...formData, institutionName: e.target.value })}
-                            className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-4 py-2 focus:ring-2 focus:ring-orange-500 outline-none transition"
+                            className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-orange-500 outline-none transition"
                             placeholder="e.g. My Company or Personal"
                         />
                     </div>
                 </div>
 
-                <div className="pt-4">
+                <div className="pt-2 sm:pt-4">
                     <button
                         type="submit"
                         disabled={loading}
-                        className="w-full bg-orange-600 hover:bg-orange-500 disabled:opacity-50 text-white font-bold py-3 rounded-lg transition flex items-center justify-center"
+                        className="w-full bg-orange-600 hover:bg-orange-500 disabled:opacity-50 text-white font-bold py-3.5 rounded-lg transition flex items-center justify-center shadow-lg shadow-orange-900/20"
                     >
                         {loading ? <Loader2 className="animate-spin mr-2" /> : null}
                         Create Project
