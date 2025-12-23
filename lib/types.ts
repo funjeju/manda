@@ -21,6 +21,7 @@ export type Project = {
     members: string[]; // User UIDs
     rootNodeId: string;
     colorTag: string; // Hex color for global todo differentiation
+    isSample?: boolean;
     createdAt: string; // ISO String
     updatedAt: string; // ISO String
 };

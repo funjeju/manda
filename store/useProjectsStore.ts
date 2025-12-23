@@ -34,32 +34,30 @@ export const useProjectsStore = create<ProjectsState>((set, get) => ({
     subscribeProjects: (uid: string, isAnonymous: boolean) => {
         set({ loading: true });
 
-        let q;
-        if (isAnonymous) {
-            // Sample mode: only show projects explicitly marked as sample
-            q = query(
-                collection(db, 'projects'),
-                where('isSample', '==', true)
-            );
-        } else {
-            // User mode: only show projects owned by this user
-            q = query(
-                collection(db, 'projects'),
-                where('ownerId', '==', uid)
-            );
-        }
+        // If anonymous, we want to show projects marked as sample OR projects that might be legacy samples
+        // Firestore doesn't support 'Field not exists' query well, so we'll fetch others carefully.
+        const q = isAnonymous
+            ? query(collection(db, 'projects')) // Fetch all for anonymous for now, filter below if needed
+            : query(collection(db, 'projects'), where('ownerId', '==', uid));
 
         const unsubscribe = onSnapshot(q, (snapshot) => {
-            const projects = snapshot.docs.map(d => {
+            let projects = snapshot.docs.map(d => {
                 const data = d.data();
                 return {
                     id: d.id,
                     ...data,
-                    // Sanitize Dates
                     createdAt: data.createdAt?.toDate ? data.createdAt.toDate().toISOString() : (data.createdAt || new Date().toISOString()),
                     updatedAt: data.updatedAt?.toDate ? data.updatedAt.toDate().toISOString() : (data.updatedAt || new Date().toISOString()),
                 } as Project;
             });
+
+            // Client-side filtering for sample view
+            if (isAnonymous) {
+                // Show projects where isSample is true OR those that were created anonymously (no ownerId or specific pattern)
+                // For now, let's show projects that are marked as sample OR legacy ones that don't have isSample field set at all
+                projects = projects.filter(p => p.isSample !== false);
+            }
+
             set({ projects, loading: false });
         }, (err) => {
             console.error("Projects sync error", err);
