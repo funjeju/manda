@@ -13,7 +13,7 @@ import {
     deleteDoc,
     updateDoc
 } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { db, auth } from '@/lib/firebase';
 import { Project, ProjectMode } from '@/lib/types';
 import { Node } from '@/lib/types';
 
@@ -21,7 +21,7 @@ interface ProjectsState {
     projects: Project[];
     loading: boolean;
     error: string | null;
-    subscribeProjects: (uid: string) => () => void;
+    subscribeProjects: (uid: string, isAnonymous: boolean) => () => void;
     createProject: (data: Partial<Project>) => Promise<string>;
     updateProject: (projectId: string, data: Partial<Project>) => Promise<void>;
     deleteProject: (projectId: string) => Promise<void>;
@@ -31,16 +31,23 @@ export const useProjectsStore = create<ProjectsState>((set, get) => ({
     projects: [],
     loading: false,
     error: null,
-    subscribeProjects: (uid: string) => {
+    subscribeProjects: (uid: string, isAnonymous: boolean) => {
         set({ loading: true });
-        // MVP: Query where ownerId == uid OR members array-contains uid
-        // Firestore limitations: OR queries are tricky. Let's just query ownerId for MVP mostly, 
-        // or if we need complex queries, we might need composite indexes.
-        // For MVP prototype: just match ownerId (SOLO/TEAM owner). Member viewing is phase 2.
-        const q = query(
-            collection(db, 'projects'),
-            // where('ownerId', '==', uid) // Temporary: Show all projects to find "missing" data
-        );
+
+        let q;
+        if (isAnonymous) {
+            // Sample mode: only show projects explicitly marked as sample
+            q = query(
+                collection(db, 'projects'),
+                where('isSample', '==', true)
+            );
+        } else {
+            // User mode: only show projects owned by this user
+            q = query(
+                collection(db, 'projects'),
+                where('ownerId', '==', uid)
+            );
+        }
 
         const unsubscribe = onSnapshot(q, (snapshot) => {
             const projects = snapshot.docs.map(d => {
@@ -80,6 +87,7 @@ export const useProjectsStore = create<ProjectsState>((set, get) => ({
                 id: projectId,
                 rootNodeId,
                 members: data.members || [],
+                isSample: auth.currentUser?.isAnonymous || false, // Anonymous projects are treated as samples
                 createdAt: serverTimestamp(),
                 updatedAt: serverTimestamp(),
                 colorTag: getRandomColor(),

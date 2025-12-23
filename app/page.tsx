@@ -30,7 +30,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     if (user) {
-      const unsub = subscribeProjects(user.uid);
+      const unsub = subscribeProjects(user.uid, user.isAnonymous);
       return () => unsub();
     }
   }, [user, subscribeProjects]);
