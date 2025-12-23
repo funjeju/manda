@@ -167,11 +167,12 @@ export default function CalendarPage({ params }: { params: Promise<{ projectId: 
                                 </div>
 
                                 <div className="space-y-1.5 overflow-visible">
-                                    {/* Goal Range Bars */}
-                                    <div className="flex flex-wrap gap-1">
+                                    <div className="flex flex-col gap-1.5 overflow-visible">
                                         {dayGoals.map((goal) => {
-                                            const isStart = isSameDay(new Date(goal.dateRange!.startDate), day);
-                                            const isEnd = isSameDay(new Date(goal.dateRange!.endDate), day);
+                                            const startStr = goal.dateRange!.startDate;
+                                            const endStr = goal.dateRange!.endDate;
+                                            const isStart = isSameDay(new Date(startStr), day);
+                                            const isEnd = isSameDay(new Date(endStr), day);
                                             const color = getNodeColor(goal.id);
                                             const isHovered = hoveredNodeId === goal.id;
 
@@ -181,18 +182,24 @@ export default function CalendarPage({ params }: { params: Promise<{ projectId: 
                                                     onMouseEnter={() => setHoveredNodeId(goal.id)}
                                                     onMouseLeave={() => setHoveredNodeId(null)}
                                                     className={clsx(
-                                                        "h-2.5 sm:h-3 transition-all duration-200 relative",
-                                                        isStart && !isEnd ? "rounded-l-full pl-1 ml-0.5" :
-                                                            !isStart && isEnd ? "rounded-r-full pr-1 mr-0.5" :
-                                                                isStart && isEnd ? "rounded-full px-1 mx-0.5" : "w-full mx-0",
-                                                        isHovered ? "scale-y-125 opacity-100 z-10" : "opacity-60 grayscale-[0.3]"
+                                                        "h-2 sm:h-2.5 transition-all duration-200 relative",
+                                                        isHovered ? "opacity-100 scale-y-125 z-10 brightness-110" : "opacity-60 grayscale-[0.2]"
                                                     )}
-                                                    style={{ backgroundColor: color, width: isStart || isEnd ? 'auto' : '100%', minWidth: (isStart || isEnd) ? '12px' : '0' }}
+                                                    style={{
+                                                        backgroundColor: color,
+                                                        width: 'calc(100% + 1px)', // Slight overlap to hide gaps
+                                                        marginLeft: isStart ? '4px' : '-4px', // Pull towards boundaries
+                                                        marginRight: isEnd ? '4px' : '-4px',
+                                                        clipPath: isStart && isEnd
+                                                            ? 'polygon(8px 0%, calc(100% - 8px) 0%, 100% 50%, calc(100% - 8px) 100%, 8px 100%, 0% 50%)'
+                                                            : isStart
+                                                                ? 'polygon(8px 0%, 100% 0%, 100% 100%, 8px 100%, 0% 50%)'
+                                                                : isEnd
+                                                                    ? 'polygon(0% 0%, calc(100% - 8px) 0%, 100% 50%, calc(100% - 8px) 100%, 0% 100%)'
+                                                                    : 'none'
+                                                    }}
                                                     title={goal.title}
-                                                >
-                                                    {isStart && !isEnd && <span className="absolute left-[-2px] top-1/2 -translate-y-1/2 text-[8px] text-white">▶</span>}
-                                                    {!isStart && isEnd && <span className="absolute right-[-2px] top-1/2 -translate-y-1/2 text-[8px] text-white">◀</span>}
-                                                </div>
+                                                />
                                             );
                                         })}
                                     </div>
